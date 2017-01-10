@@ -42,7 +42,6 @@ func NewEntryByMap(m map[string]string) (*Entry, error) {
 	err := errors.New("Invalid urlentry map data")
 	entry := Entry{}
 	t := reflect.TypeOf(entry)
-	v := reflect.ValueOf(entry)
 	for k := 0; k < t.NumField(); k++ {
 		key := t.Field(k).Name
 		if _, ok := m[key]; !ok {

@@ -60,6 +60,6 @@ func (t *TURL) Set(url string) (string, error) {
 	}
 	entry.key = key
 	entry.url = url
-	res, err := t.s.Set(entry)
+	_, err = t.s.Set(entry)
 	return key, err
 }

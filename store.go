@@ -37,7 +37,6 @@ func (s *Store) Get(k string) (*Entry, error) {
 	if result.Err() != nil {
 		return nil, result.Err()
 	}
-	entry := Entry{}
 	m, err := result.Result()
 	if err != nil {
 		return nil, err
