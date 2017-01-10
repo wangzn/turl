@@ -13,7 +13,7 @@ var (
 
 func TestStoreSet(t *testing.T) {
 	data := make(map[string]string)
-	s := NewStore("10.9.101.31:6379", "megviiop")
+	s := NewStore("127.0.0.1:6379", "megviiop")
 	id, err := s.GetID()
 	if err != nil {
 		t.Error("Fail to get id", err.Error())
