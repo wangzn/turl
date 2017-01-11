@@ -2,14 +2,17 @@ package turl
 
 import (
 	"errors"
+
 	"github.com/speps/go-hashids"
 )
 
+//TURL describe the basic information used to operating url-hash entry.
 type TURL struct {
 	h *hashids.HashID
 	s *Store
 }
 
+//New return a pointer to a TURL instance.
 func New(salt, addr, pwd string) *TURL {
 	hd := hashids.NewData()
 	hd.MinLength = 6
@@ -22,6 +25,7 @@ func New(salt, addr, pwd string) *TURL {
 	}
 }
 
+//Encode encodes a int64 slice into a string.
 func (t *TURL) Encode(s []int64) (string, error) {
 	if t == nil {
 		return "", errors.New("t is nil")
@@ -29,6 +33,7 @@ func (t *TURL) Encode(s []int64) (string, error) {
 	return t.h.EncodeInt64(s)
 }
 
+//Decode decodes a string into a int64 slice.
 func (t *TURL) Decode(s string) ([]int64, error) {
 	if t == nil {
 		return []int64{}, errors.New("t is nil")
@@ -36,7 +41,8 @@ func (t *TURL) Decode(s string) ([]int64, error) {
 	return t.h.DecodeInt64WithError(s)
 }
 
-func (t *TURL) GetUrl(k string) (string, error) {
+//GetURL returns the original url from a hashed key.
+func (t *TURL) GetURL(k string) (string, error) {
 	res, err := t.s.Get(k)
 	if err != nil {
 		return "", err
@@ -44,10 +50,12 @@ func (t *TURL) GetUrl(k string) (string, error) {
 	return res.url, nil
 }
 
+//GetEntry returns a url-hash entry from a hashed key.
 func (t *TURL) GetEntry(k string) (*Entry, error) {
 	return t.s.Get(k)
 }
 
+//Set sets url to TURL, and get a hashed, tiny key to represent it.
 func (t *TURL) Set(url string) (string, error) {
 	id, err := t.s.GetID()
 	if err != nil {

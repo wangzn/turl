@@ -7,13 +7,15 @@ import (
 )
 
 var (
-	KEY = "thisiskey"
-	URL = "thisisurl"
+	KEY       = "thisiskey"
+	URL       = "thisisurl"
+	REDISADDR = "127.0.0.1:6379"
+	REDISAUTH = "megviiop"
 )
 
 func TestStoreSet(t *testing.T) {
 	data := make(map[string]string)
-	s := NewStore("127.0.0.1:6379", "megviiop")
+	s := NewStore(REDISADDR, REDISAUTH)
 	id, err := s.GetID()
 	if err != nil {
 		t.Error("Fail to get id", err.Error())
@@ -37,7 +39,7 @@ func TestStoreSet(t *testing.T) {
 
 func TestStoreGet(t *testing.T) {
 	key := "thisiskey"
-	s := NewStore("10.9.101.31:6379", "megviiop")
+	s := NewStore(REDISADDR, REDISAUTH)
 	entry, err := s.Get(key)
 	if err != nil {
 		t.Error("Fail to get key")
@@ -47,5 +49,16 @@ func TestStoreGet(t *testing.T) {
 	}
 	if entry.url != URL {
 		t.Error("Get an invalid url")
+	}
+}
+
+func TestStoreGetID(t *testing.T) {
+	s := NewStore(REDISADDR, REDISAUTH)
+	id, err := s.GetID()
+	if err != nil {
+		t.Error("Fail to get id")
+	}
+	if id < 0 {
+		t.Error("Got invalid id")
 	}
 }
