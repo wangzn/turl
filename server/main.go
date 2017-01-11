@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,7 +20,6 @@ func init() {
 	flag.StringVar(&port, "port", ":8080", "port to listen")
 	flag.StringVar(&salt, "hash salt", "atinyurlservice", "salt string for hashing method")
 	flag.StringVar(&addr, "redis addr", "redis://127.0.0.1:6379", "redis address for store")
-
 }
 
 //GetURL defines the method of get url from a key.
@@ -55,7 +53,6 @@ func AddURL(c *gin.Context) {
 
 func main() {
 	flag.Parse()
-	fmt.Println(salt, addr)
 	t, err = turl.New(salt, addr)
 	if err != nil {
 		panic(err)
