@@ -9,13 +9,15 @@ import (
 var (
 	KEY       = "thisiskey"
 	URL       = "thisisurl"
-	REDISADDR = "127.0.0.1:6379"
-	REDISAUTH = "megviiop"
+	REDISADDR = "redis://@127.0.0.1:6379"
 )
 
 func TestStoreSet(t *testing.T) {
 	data := make(map[string]string)
-	s := NewStore(REDISADDR, REDISAUTH)
+	s, err := NewStore(REDISADDR)
+	if err != nil {
+		t.Errorf("Fail to init store client, %s", err.Error())
+	}
 	id, err := s.GetID()
 	if err != nil {
 		t.Error("Fail to get id", err.Error())
@@ -39,7 +41,10 @@ func TestStoreSet(t *testing.T) {
 
 func TestStoreGet(t *testing.T) {
 	key := "thisiskey"
-	s := NewStore(REDISADDR, REDISAUTH)
+	s, err := NewStore(REDISADDR)
+	if err != nil {
+		t.Errorf("Fail to init store client, %s", err.Error())
+	}
 	entry, err := s.Get(key)
 	if err != nil {
 		t.Error("Fail to get key")
@@ -53,7 +58,10 @@ func TestStoreGet(t *testing.T) {
 }
 
 func TestStoreGetID(t *testing.T) {
-	s := NewStore(REDISADDR, REDISAUTH)
+	s, err := NewStore(REDISADDR)
+	if err != nil {
+		t.Errorf("Fail to init store client, %s", err.Error())
+	}
 	id, err := s.GetID()
 	if err != nil {
 		t.Error("Fail to get id")

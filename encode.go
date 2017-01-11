@@ -6,6 +6,11 @@ import (
 	"github.com/speps/go-hashids"
 )
 
+//HashKeyLen defines the default hash key len.
+var (
+	HashKeyLen = 8
+)
+
 //Encode describe encode and decode methods of hashing url to key
 type Encode struct {
 	h *hashids.HashID
@@ -14,7 +19,7 @@ type Encode struct {
 //NewEncode return a new instance of encoder for url hashing.
 func NewEncode(salt string) *Encode {
 	hd := hashids.NewData()
-	hd.MinLength = 6
+	hd.MinLength = HashKeyLen
 	hd.Salt = salt
 	h := hashids.NewWithData(hd)
 	return &Encode{

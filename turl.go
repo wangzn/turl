@@ -7,13 +7,13 @@ type TURL struct {
 }
 
 //New return a pointer to a TURL instance.
-func New(salt, addr, pwd string) *TURL {
+func New(salt, addr string) (*TURL, error) {
 	e := NewEncode(salt)
-	s := NewStore(addr, pwd)
+	s, err := NewStore(addr)
 	return &TURL{
 		e: e,
 		s: s,
-	}
+	}, err
 }
 
 //GetURL returns the original url from a hashed key.

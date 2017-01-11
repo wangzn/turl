@@ -1,6 +1,9 @@
 package turl
 
 import (
+	"errors"
+	"net/url"
+
 	"gopkg.in/redis.v5"
 )
 
@@ -15,15 +18,28 @@ type Store struct {
 }
 
 //NewStore return a Store instance according to the addr or other params.
-func NewStore(addr, pwd string) *Store {
+func NewStore(addr string) (*Store, error) {
+
+	u, err := url.Parse(addr)
+	if err != nil {
+		return nil, errors.New("Invalid store addr")
+	}
+	if u.Scheme != "redis" {
+		return nil, errors.New("Unsupported store type")
+	}
+	pwd := ""
+	if u.User != nil {
+		pwd, _ = u.User.Password()
+	}
+	//use arbitary redis.
 	client := redis.NewClient(&redis.Options{
-		Addr:     addr,
+		Addr:     u.Host,
 		Password: pwd,
 		DB:       0, // use default DB
 	})
 	return &Store{
 		client: client,
-	}
+	}, nil
 }
 
 //Set sets the url-hash entry into the store.
