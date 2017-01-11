@@ -1,10 +1,10 @@
 # TURL
-TURL is a tiny url service written in [go][go]
+TURL is a tiny url service written in [go](https://golang.org/)
 
 ## Introduction
-* use redis for backend storage.
-* use gin for web service.
-* use hashids[http://www.hashids.org] for id hashing.
+* use [redis](http://redis.io) for backend storage.
+* use [gin](https://github.com/gin-gonic/gin) for web service.
+* use [hashids](http://www.hashids.org) for id hashing.
 
 ## Setup
 ```
