@@ -1,44 +1,19 @@
 package turl
 
-import (
-	"errors"
-
-	"github.com/speps/go-hashids"
-)
-
 //TURL describe the basic information used to operating url-hash entry.
 type TURL struct {
-	h *hashids.HashID
+	e *Encode
 	s *Store
 }
 
 //New return a pointer to a TURL instance.
 func New(salt, addr, pwd string) *TURL {
-	hd := hashids.NewData()
-	hd.MinLength = 6
-	hd.Salt = salt
-	h := hashids.NewWithData(hd)
+	e := NewEncode(salt)
 	s := NewStore(addr, pwd)
 	return &TURL{
-		h: h,
+		e: e,
 		s: s,
 	}
-}
-
-//Encode encodes a int64 slice into a string.
-func (t *TURL) Encode(s []int64) (string, error) {
-	if t == nil {
-		return "", errors.New("t is nil")
-	}
-	return t.h.EncodeInt64(s)
-}
-
-//Decode decodes a string into a int64 slice.
-func (t *TURL) Decode(s string) ([]int64, error) {
-	if t == nil {
-		return []int64{}, errors.New("t is nil")
-	}
-	return t.h.DecodeInt64WithError(s)
 }
 
 //GetURL returns the original url from a hashed key.
@@ -62,7 +37,7 @@ func (t *TURL) Set(url string) (string, error) {
 		return "", err
 	}
 	entry := NewEntry(id)
-	key, err := t.Encode([]int64{id})
+	key, err := t.e.Encode([]int64{id})
 	if err != nil {
 		return "", err
 	}
