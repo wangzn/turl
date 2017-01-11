@@ -1,10 +1,6 @@
 package turl
 
-import (
-	"errors"
-
-	"github.com/speps/go-hashids"
-)
+import "github.com/speps/go-hashids"
 
 //HashKeyLen defines the default hash key len.
 var (
@@ -29,16 +25,16 @@ func NewEncode(salt string) *Encode {
 
 //Encode encodes a int64 slice into a string.
 func (e *Encode) Encode(s []int64) (string, error) {
-	if e == nil {
-		return "", errors.New("t is nil")
+	if e == nil || e.h == nil {
+		return "", ErrInvalidInstancePointer
 	}
 	return e.h.EncodeInt64(s)
 }
 
 //Decode decodes a string into a int64 slice.
 func (e *Encode) Decode(s string) ([]int64, error) {
-	if e == nil {
-		return []int64{}, errors.New("t is nil")
+	if e == nil || e.h == nil {
+		return []int64{}, ErrInvalidInstancePointer
 	}
 	return e.h.DecodeInt64WithError(s)
 }

@@ -22,7 +22,10 @@ func (t *TURL) GetURL(k string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return res.url, nil
+	if res.IsActive() {
+		return res.url, nil
+	}
+	return "", ErrInactiveURL
 }
 
 //GetEntry returns a url-hash entry from a hashed key.
@@ -45,4 +48,21 @@ func (t *TURL) Set(url string) (string, error) {
 	entry.url = url
 	_, err = t.s.Set(entry)
 	return key, err
+}
+
+//InactiveURL inactive the stored url-hash entry.
+func (t *TURL) InactiveURL(key string) error {
+	e, err := t.s.Get(key)
+	if err != nil {
+		return err
+	}
+	if e == nil || e.GetKey() != key {
+		return ErrKeyNotFound
+	}
+	e.status = StInactiveURL
+	_, err = t.s.Set(e)
+	if err != nil {
+		return err
+	}
+	return nil
 }

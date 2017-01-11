@@ -1,7 +1,6 @@
 package turl
 
 import (
-	"errors"
 	"net/url"
 
 	"gopkg.in/redis.v5"
@@ -19,13 +18,12 @@ type Store struct {
 
 //NewStore return a Store instance according to the addr or other params.
 func NewStore(addr string) (*Store, error) {
-
 	u, err := url.Parse(addr)
 	if err != nil {
-		return nil, errors.New("Invalid store addr")
+		return nil, ErrInvalidStoreAddr
 	}
 	if u.Scheme != "redis" {
-		return nil, errors.New("Unsupported store type")
+		return nil, ErrUnsupportedStoreType
 	}
 	pwd := ""
 	if u.User != nil {
@@ -61,6 +59,9 @@ func (s *Store) Get(k string) (*Entry, error) {
 	m, err := result.Result()
 	if err != nil {
 		return nil, err
+	}
+	if m["key"] != k {
+		return nil, ErrKeyNotFound
 	}
 	return NewEntryByMap(m)
 }

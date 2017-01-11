@@ -30,12 +30,9 @@ func GetURL(c *gin.Context) {
 	} else {
 		url, e := t.GetURL(key)
 		if e != nil {
-			if e == turl.ErrKeyNotFound {
-				c.String(http.StatusNotFound, e.Error())
-			} else {
-				c.String(http.StatusInternalServerError, e.Error())
-			}
+			c.String(http.StatusInternalServerError, e.Error())
 		} else {
+			c.Writer.Header().Set("X-TURL-KEY", key)
 			c.Redirect(http.StatusFound, url)
 		}
 	}
@@ -55,6 +52,22 @@ func AddURL(c *gin.Context) {
 	}
 }
 
+//QueryURL defines the method of query url from a key
+func QueryURL(c *gin.Context) {
+	key := c.Param("key")
+	if len(key) == 0 {
+		c.String(http.StatusBadRequest, "Invalid key")
+	} else {
+		url, e := t.GetURL(key)
+		if e != nil {
+			c.String(http.StatusInternalServerError, e.Error())
+		} else {
+			c.Writer.Header().Set("X-TURL-KEY", key)
+			c.String(http.StatusOK, url)
+		}
+	}
+}
+
 func main() {
 	flag.Parse()
 	t, err = turl.New(salt, addr)
@@ -66,5 +79,6 @@ func main() {
 	r.Use(gin.Recovery())
 	r.GET("/:key", GetURL)
 	r.POST("/new", AddURL)
+	r.POST("/query/:key", QueryURL)
 	r.Run(port)
 }

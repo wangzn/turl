@@ -9,8 +9,8 @@ import (
 
 //Define valid and invalid url status in url entry struct.
 const (
-	StValidURL = iota
-	StInvalidURL
+	StActiveURL = iota
+	StInactiveURL
 )
 
 //Entry define the struct of a url-hash entry.
@@ -20,6 +20,35 @@ type Entry struct {
 	url        string
 	status     int
 	updateTime string
+}
+
+//NewEntry return a pointer to a new url-hash entry.
+func NewEntry(id int64) *Entry {
+	return &Entry{
+		id:         id,
+		status:     StActiveURL,
+		updateTime: time.Now().String(),
+	}
+}
+
+//NewEntryByMap return a url-hash entry according to a mapped data.
+//Err occurs if some filed missing.
+func NewEntryByMap(m map[string]string) (*Entry, error) {
+	err := errors.New("Invalid urlentry map data")
+	entry := Entry{}
+	t := reflect.TypeOf(entry)
+	for k := 0; k < t.NumField(); k++ {
+		key := t.Field(k).Name
+		if _, ok := m[key]; !ok {
+			return nil, err
+		}
+	}
+	entry.id, _ = strconv.ParseInt(m["id"], 10, 64)
+	entry.key = m["key"]
+	entry.url = m["url"]
+	entry.status, _ = strconv.Atoi(m["status"])
+	entry.updateTime = m["updateTime"]
+	return &entry, nil
 }
 
 //GetKey return the key of url-hash entry.
@@ -43,31 +72,7 @@ func (e *Entry) GetMapData() map[string]string {
 	return m
 }
 
-//NewEntryByMap return a url-hash entry according to a mapped data.
-//Err occurs if some filed missing.
-func NewEntryByMap(m map[string]string) (*Entry, error) {
-	err := errors.New("Invalid urlentry map data")
-	entry := Entry{}
-	t := reflect.TypeOf(entry)
-	for k := 0; k < t.NumField(); k++ {
-		key := t.Field(k).Name
-		if _, ok := m[key]; !ok {
-			return nil, err
-		}
-	}
-	entry.id, _ = strconv.ParseInt(m["id"], 10, 64)
-	entry.key = m["key"]
-	entry.url = m["url"]
-	entry.status, _ = strconv.Atoi(m["status"])
-	entry.updateTime = m["updateTime"]
-	return &entry, nil
-}
-
-//NewEntry return a pointer to a new url-hash entry.
-func NewEntry(id int64) *Entry {
-	return &Entry{
-		id:         id,
-		status:     StValidURL,
-		updateTime: time.Now().String(),
-	}
+//IsActive checks if the url-hash entry is active or not.
+func (e *Entry) IsActive() bool {
+	return e.status == StActiveURL
 }
