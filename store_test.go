@@ -65,6 +65,9 @@ func TestStoreGetID(t *testing.T) {
 	id, err := s.GetID()
 	if err != nil {
 		t.Error("Fail to get id")
+		if id != -1 {
+			t.Error("Invalid id if error occurs")
+		}
 	}
 	if id < 0 {
 		t.Error("Got invalid id")
